@@ -38,7 +38,7 @@ namespace CSharpChainNetwork
 			using (WebApp.Start<Startup>(url: baseAddress))
 			{
 				Console.WriteLine("");
-				Console.WriteLine("CSharpChain Blockchain // dejan@mauer.si");
+				Console.WriteLine("CSharpChain Blockchain // dejan@mauer.si // www.mauer.si");
 				Console.WriteLine("----------------------------------------");
 				Console.WriteLine("This CSharpChain node is running on " + baseAddress);
 				Console.WriteLine("Type 'help' if you are not sure what to do ;)");
