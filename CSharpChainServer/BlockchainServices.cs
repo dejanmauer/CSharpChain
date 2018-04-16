@@ -69,10 +69,13 @@ namespace CSharpChainServer
 
 		public Block MineBlock(string miningRewardAddress)
 		{
+			// add mining reward transaction to block
+			Transaction trans = new Transaction("SYSTEM", miningRewardAddress, blockchain.MiningReward, "Mining reward");
+			blockchain.PendingTransactions.Add(trans);
+
 			Block block = new Block(DateTime.Now, blockchain.PendingTransactions, LatestBlock().Hash);
 			var blockServices = new BlockServices(block);
 			blockServices.MineBlock(blockchain.Difficulty);
-
 			blockchain.Chain.Add(block);
 
 			//clear pending transactions (all pending transactions are in a block

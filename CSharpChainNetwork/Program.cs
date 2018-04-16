@@ -40,15 +40,14 @@ namespace CSharpChainNetwork
 				Console.WriteLine("");
 				Console.WriteLine("CSharpChain Blockchain // dejan@mauer.si");
 				Console.WriteLine("----------------------------------------");
-				Console.WriteLine("");
 				Console.WriteLine("This CSharpChain node is running on " + baseAddress);
-				Console.WriteLine("");
+				Console.WriteLine("Type 'help' if you are not sure what to do ;)");
 
 				blockchainServices = new BlockchainServices();
 				nodeServices = new NodeServices(blockchainServices.Blockchain);
 
-				string commandLine = "";
-				do
+				string commandLine;
+					do
 				{
 					ShowCommandLine();
 
@@ -59,20 +58,29 @@ namespace CSharpChainNetwork
 					switch (command[0])
 					{
 						case "quit":
+						case "q":
 							commandLine = "q";
 							break;
+
+						case "help":
+						case "?":
+							CommandHelp();
+							break;
+
 						case "node-add":
 						case "na":
 							// if param1 is numeric then translate to localhost port
 							if (command[1].All(char.IsDigit)) command[1] = "http://localhost:" + command[1];
 							CommandNodeAdd(command[1]);
 							break;
+
 						case "node-remove":
 						case "nr":
 							// if param1 is numeric then translate to localhost port
 							if (command[1].All(char.IsDigit)) command[1] = "http://localhost:" + command[1];
 							CommandNodeRemove(command[1]);
 							break;
+
 						case "nodes-list":
 						case "nl":
 							CommandListNodes(nodeServices.Nodes);
@@ -82,35 +90,43 @@ namespace CSharpChainNetwork
 						case "ta":
 							CommandTransactionsAdd(command[1], command[2], command[3], command[4]);
 							break;
+
 						case "transactions-pending":
 						case "tp":
 							CommandListPendingTransactions(blockchainServices.Blockchain.PendingTransactions);
 							break;
+
 						case "blockchain-mine":
 						case "bm":
 							CommandBlockchainMine(command[1]);
 							break;
+
 						case "bv":
 						case "blockchain-valid":
 							CommandBlockchainValidity();
 							break;
+
 						case "blockchain-length":
 						case "bl":
 							CommandBlockchainLength();
 							break;
+
 						case "block":
 						case "b":
 							CommandBlock(int.Parse(command[1]));
 							break;
+
 						case "balance-get":
 						case "bal":
 							CommandBalance(command[1]);
 							break;
+
 						case "blockchain-update":
 						case "update":
 						case "bu":
 							CommandBlockchainUpdate();
 							break;
+
 						default:
 							Console.WriteLine("Ups! I don't understand...");
 							Console.WriteLine("");
@@ -147,8 +163,31 @@ namespace CSharpChainNetwork
 			if (useNetwork)
 			{
 				NetworkRegister(NodeUrl);
+				CommandBlockchainUpdate();
 			}
 			Console.WriteLine("");
+		}
+
+		static void CommandHelp()
+		{
+			Console.WriteLine("Commands:");
+			Console.WriteLine("h, help = list of commands.");
+			Console.WriteLine("q, quit = exit the program.");
+			Console.WriteLine("na, node-add [url] = connect current node to other node.");
+			Console.WriteLine("nr, node-remove [url] = disconnect current node from other node.");
+			Console.WriteLine("nl, nodes-list = list connected nodes.");
+			Console.WriteLine("ta, transaction-add [senderAddress] [receiverAddress] [Amount] [Description] = create new transaction.");
+			Console.WriteLine("np, transactions-pending = list of transactions not included in block.");
+			Console.WriteLine("bm, blockchain-mine [rewardAddress] = create block from pending transactions,");
+			Console.WriteLine("bv, blockchain-valid = Validates blockchain.");
+			Console.WriteLine("bl, blockchain-length = number of blocks in blockchain.");
+			Console.WriteLine("b, block [index] = list info about specified block.");
+			Console.WriteLine("bu, update, blockchain-update = update blockchain to the longest in network.");
+			Console.WriteLine("bal, balance-get [address] = get balance for specified address.");
+			Console.WriteLine();
+			Console.WriteLine("Email me: dejan@mauer.si");
+			Console.WriteLine();
+
 		}
 
 		static void CommandBlockchainUpdate()
@@ -352,7 +391,7 @@ namespace CSharpChainNetwork
 				}
 
 				Console.WriteLine($"    Max blockchain length found on {maxNode} with length {maxLength}.");
-				if (blockchainServices.BlockchainLength()>=maxLength)
+				if (blockchainServices.BlockchainLength() >= maxLength)
 				{
 					Console.WriteLine($"    No blockchain found larger than existing one.");
 					Console.WriteLine();
@@ -363,7 +402,7 @@ namespace CSharpChainNetwork
 				// get missing blocks
 				try
 				{
-					for (int i=blockchainServices.BlockchainLength(); i<maxLength; i++)
+					for (int i = blockchainServices.BlockchainLength(); i < maxLength; i++)
 					{
 						Block newBlock;
 						Console.WriteLine($"      Requesting block {i} from {maxNode}...");
